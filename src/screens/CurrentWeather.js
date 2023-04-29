@@ -2,19 +2,28 @@ import React from "react"
 import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'; 
 import RowText from "../components/RowText";
+import { weatherType } from "../utilities/weatherType"
 
-const CurrentWether = () => {
-  const { wrapper, container,temp, feels, highLowWrapper, highLow, bodyWrapper, description, message } = styles
+
+const CurrentWether = ({ weatherData }) => {
+  const { wrapper, container, tempStyles, feels, highLowWrapper, highLow, bodyWrapper, description, message } = styles
+
+  console.log(weatherData)
+
+  const { main: {temp, feels_like, temp_max, temp_min}, weather } = weatherData
+  const weatherConditions = weather[0].main
+  console.log(weatherType[weatherConditions])
+
   return (
-    <SafeAreaView style={wrapper}>
+    <SafeAreaView style={[wrapper, {backgroundColor: weatherType[weatherConditions.backgroundColor]}]}>
       <View style={container}>
-        <Feather name="sun" size={100} color="black" />
-        <Text style={temp}>6</Text>
-        <Text style={feels}>Feels like 5</Text>
-        <RowText messageOne={'High: 8'} messageOneStyles={highLow} messageTwo={'Low: 6'} messageTwoStyles={highLow} containerStyles={highLowWrapper}/>
+        <Feather name={weatherType[weatherConditions].icon} size={100} color="white" />
+        <Text style={tempStyles}>{temp}</Text>
+        <Text style={feels}>{`Feels like ${feels_like}`}</Text>
+        <RowText messageOne={`High: ${temp_max}`} messageOneStyles={highLow} messageTwo={`Low: ${temp_min}`} messageTwoStyles={highLow} containerStyles={highLowWrapper}/>
 
       </View>
-      <RowText messageOne={'Its sunny'} messageOneStyles={description} messageTwo={'Its perfect t-shirt weather'} messageTwoStyles={message} containerStyles={bodyWrapper}/>
+      <RowText messageOne={weather[0].description} messageOneStyles={description} messageTwo={weatherType[weatherConditions].message} messageTwoStyles={message} containerStyles={bodyWrapper}/>
       {/* <View style={styles.bodyWrapper}>
           <Text style={styles.description}>Its sunny</Text>
           <Text style={styles.message}>Its perfect t-shirt weather</Text>
@@ -27,7 +36,7 @@ const CurrentWether = () => {
 
 const styles = StyleSheet.create({
   wrapper:{
-    backgroundColor: 'pink',
+    //backgroundColor: 'pink',
     flex: 1,
   },
   container:{
@@ -36,7 +45,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   
-  temp:{
+  tempStyles:{
     color: 'black',
     fontSize: 48,
   },
